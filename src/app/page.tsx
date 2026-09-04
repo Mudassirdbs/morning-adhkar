@@ -6,19 +6,13 @@ import { ZikrCard } from "@/components/ZikrCard";
 import {
   Play,
   Pause,
-  SkipForward,
-  SkipBack,
   ListRestart,
-  LocateFixed,
 } from "lucide-react";
 
 export default function HomePage() {
   const [doneCount, setDoneCount] = useState(0);
   const [activeZikrIndex, setActiveZikrIndex] = useState<number | null>(null);
   const [isContinuousPlay, setIsContinuousPlay] = useState(false);
-
-  const activeZikr = activeZikrIndex !== null ? azkar[activeZikrIndex] : null;
-  const progress = Math.round((doneCount / azkar.length) * 100);
 
   // Auto scroll to active zikr card
   const scrollToZikr = (id: number) => {
@@ -58,14 +52,6 @@ export default function HomePage() {
     }
   };
 
-  const handlePrevZikr = () => {
-    if (activeZikrIndex !== null && activeZikrIndex > 0) {
-      const prevIndex = activeZikrIndex - 1;
-      setActiveZikrIndex(prevIndex);
-      scrollToZikr(azkar[prevIndex].id);
-    }
-  };
-
   const handleCardAudioEnded = (index: number) => {
     if (isContinuousPlay) {
       if (index < azkar.length - 1) {
@@ -86,7 +72,7 @@ export default function HomePage() {
   };
 
   return (
-    <div id="adhkar-app-content" className="pb-28">
+    <div id="adhkar-app-content" className="pb-8">
       <main className="mx-auto max-w-5xl xl:max-w-6xl px-4 pb-12 pt-6">
         <h1 className="sr-only">أذكار الصباح</h1>
 
@@ -153,82 +139,6 @@ export default function HomePage() {
           })}
         </section>
       </main>
-
-      {/* Floating Bottom Audio Player Bar */}
-      {activeZikr && (
-        <aside
-          aria-label="المشغل الصوتي العام"
-          className="fixed bottom-3 left-3 right-3 z-40 mx-auto max-w-3xl xl:max-w-4xl rounded-2xl border-2 border-primary/30 bg-card/95 p-3 shadow-2xl backdrop-blur-md transition-all duration-300 sm:bottom-5"
-        >
-          <div className="flex items-center justify-between gap-3">
-            {/* Dhikr Info */}
-            <div className="flex min-w-0 flex-1 items-center gap-3">
-              <button
-                type="button"
-                onClick={() => scrollToZikr(activeZikr.id)}
-                title="الانتقال إلى موضع الذكر"
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition hover:bg-primary hover:text-primary-foreground shadow-sm"
-              >
-                <LocateFixed size={18} />
-              </button>
-
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="rounded bg-accent/20 px-1.5 py-0.5 text-[10px] font-bold text-accent">
-                    الذكر {activeZikrIndex! + 1} من {azkar.length}
-                  </span>
-                  {isContinuousPlay && (
-                    <span className="flex items-center gap-1 text-[11px] font-semibold text-primary">
-                      <span className="h-1.5 w-1.5 rounded-full bg-primary animate-ping" />
-                      <span>تشغيل متتالي</span>
-                    </span>
-                  )}
-                </div>
-                <p className="truncate text-xs font-semibold text-foreground mt-0.5">
-                  {activeZikr.intro ? `${activeZikr.intro} — ` : ""}
-                  {activeZikr.text}
-                </p>
-              </div>
-            </div>
-
-            {/* Playback Controls */}
-            <div className="flex items-center gap-1 sm:gap-2">
-              <button
-                type="button"
-                onClick={handlePrevZikr}
-                disabled={activeZikrIndex === 0}
-                title="الذكر السابق"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-secondary-foreground transition hover:bg-primary/20 disabled:opacity-40"
-              >
-                <SkipForward size={17} />
-              </button>
-
-              <button
-                type="button"
-                onClick={startPlayAll}
-                title={isContinuousPlay ? "إيقاف مؤقت" : "متابعة التشغيل"}
-                className="flex h-11 w-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition hover:bg-primary/90 active:scale-95"
-              >
-                {isContinuousPlay ? (
-                  <Pause size={20} fill="currentColor" />
-                ) : (
-                  <Play size={20} fill="currentColor" className="translate-x-0.5" />
-                )}
-              </button>
-
-              <button
-                type="button"
-                onClick={handleNextZikr}
-                disabled={activeZikrIndex === azkar.length - 1}
-                title="الذكر التالي"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-secondary-foreground transition hover:bg-primary/20 disabled:opacity-40"
-              >
-                <SkipBack size={17} />
-              </button>
-            </div>
-          </div>
-        </aside>
-      )}
     </div>
   );
 }
