@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Amiri } from "next/font/google";
+import { IframeResizer } from "@/components/IframeResizer";
 import "./globals.css";
 
 const amiri = Amiri({
@@ -36,6 +37,7 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" className={amiri.variable}>
       <body className="min-h-screen bg-background font-arabic antialiased selection:bg-primary/20">
+        <IframeResizer />
         {children}
       </body>
     </html>
