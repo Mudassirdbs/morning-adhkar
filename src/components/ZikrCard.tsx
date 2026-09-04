@@ -329,6 +329,14 @@ export function ZikrCard({
           </div>
         )}
 
+        {zikr.title && (
+          <div className="mb-3 flex justify-center">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/10 px-3.5 py-1 text-xs sm:text-sm font-bold text-primary shadow-xs">
+              {zikr.title}
+            </span>
+          </div>
+        )}
+
         {zikr.intro && (
           <p className="text-center text-lg font-semibold text-accent sm:text-xl">
             {zikr.intro}

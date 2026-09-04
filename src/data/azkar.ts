@@ -1,6 +1,7 @@
 export type Zikr = {
   id: number;
   count: number;
+  title?: string;
   intro?: string;
   text: string;
   source?: string;
