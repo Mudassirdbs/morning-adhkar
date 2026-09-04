@@ -76,11 +76,20 @@ function morning_adhkar_render_iframe($atts = [], $default_slug = '')
             // Initial fallback height; replaced dynamically by postMessage from the app
             iframe.style.height = '<?php echo esc_js($atts['initial_height']); ?>';
 
+            let currentHeight = 0;
+
             // Listen for height updates from the Adhkar app and adjust iframe height
             window.addEventListener('message', function(event) {
                 if (event.origin !== ALLOWED_ORIGIN) return;
                 if (!event.data || typeof event.data.height !== 'number') return;
-                const newHeight = Math.ceil(event.data.height) + 8; // safety buffer
+                if (event.data.type && event.data.type !== 'adhkar-height') return;
+
+                const newHeight = Math.ceil(event.data.height);
+
+                // Prevent infinite resize loop: only update if height changed by at least 10px
+                if (Math.abs(newHeight - currentHeight) < 10) return;
+
+                currentHeight = newHeight;
                 iframe.style.height = newHeight + 'px';
             }, false);
         });

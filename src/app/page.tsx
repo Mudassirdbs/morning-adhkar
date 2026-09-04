@@ -86,7 +86,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="pb-28">
+    <div id="adhkar-app-content" className="pb-28">
       <main className="mx-auto max-w-5xl xl:max-w-6xl px-4 pb-12 pt-6">
         <h1 className="sr-only">أذكار الصباح</h1>
 

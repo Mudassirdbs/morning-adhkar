@@ -36,7 +36,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl" className={amiri.variable}>
-      <body className="min-h-screen bg-transparent font-arabic antialiased selection:bg-primary/20">
+      <body className="bg-transparent font-arabic antialiased selection:bg-primary/20">
         <IframeResizer />
         {children}
       </body>
