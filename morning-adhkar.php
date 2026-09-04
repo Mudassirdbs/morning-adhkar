@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: Morning Adhkar - أذكار الصباح
+Plugin Name: Morning Adhkar & Daily Duas - أذكار الصباح والأدعية اليومية
 Plugin URI: https://github.com/Mudassirdbs/morning-adhkar
-Description: Embeds the Morning Adhkar (أذكار الصباح) interactive application with audio recitations and counter via shortcode [morning_adhkar].
-Version: 1.0.0
+Description: Embeds Morning Adhkar (أذكار الصباح) and Daily Duas (أدعية وأذكار يومية) interactive applications with audio recitations and counter via shortcodes [morning_adhkar] and [daily_duas].
+Version: 1.1.0
 Author: Mudassir Asghar
 Author URI: https://mudassirasghar.com/
 License: GPL-2.0+
@@ -15,29 +15,41 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Shortcode to embed the Morning Adhkar application.
+ * Core function to render the Adhkar / Duas application iframe.
  *
- * Usage:
- * [morning_adhkar]
- * [morning_adhkar max_width="100%" initial_height="900px"]
- * [morning_azkar]
+ * @param array  $atts         Shortcode attributes.
+ * @param string $default_slug Default page slug (empty for home/morning adhkar, 'daily-duas' for daily supplications).
+ * @return string
  */
-function morning_adhkar_shortcode($atts = [])
+function morning_adhkar_render_iframe($atts = [], $default_slug = '')
 {
     $atts = shortcode_atts(
         [
+            'slug'           => $default_slug,
+            'page'           => '',
+            'type'           => '',
             'max_width'      => '1200px',
             'initial_height' => '900px',
             'scrolling'      => 'no',
             'class'          => '',
         ],
-        $atts,
-        'morning_adhkar'
+        $atts
     );
 
-    $iframe_url = 'https://morning-adhkar.vercel.app/';
-    $iframe_id  = 'morning-adhkar-iframe-' . uniqid();
+    // Determine target slug from parameters
+    $slug = !empty($atts['page']) ? $atts['page'] : (!empty($atts['slug']) ? $atts['slug'] : $default_slug);
+    if (empty($slug) && !empty($atts['type'])) {
+        $slug = ($atts['type'] === 'daily' || $atts['type'] === 'duas') ? 'daily-duas' : '';
+    }
+
+    $slug = trim($slug, '/');
+    $base_url = 'https://morning-adhkar.vercel.app';
+    $iframe_url = !empty($slug) ? $base_url . '/' . $slug : $base_url . '/';
+    $iframe_id  = 'adhkar-iframe-' . uniqid();
     $class_attr = !empty($atts['class']) ? ' ' . esc_attr($atts['class']) : '';
+    $title_attr = ($slug === 'daily-duas' || strpos($slug, 'daily') !== false)
+        ? 'أدعية وأذكار يومية - Daily Islamic Duas'
+        : 'أذكار الصباح - Morning Adhkar';
 
     ob_start();
     ?>
@@ -45,11 +57,12 @@ function morning_adhkar_shortcode($atts = [])
         <iframe
             id="<?php echo esc_attr($iframe_id); ?>"
             src="<?php echo esc_url($iframe_url); ?>"
-            style="width: 100%; border: none; display: block; overflow: hidden; transition: height 0.3s ease-in-out;"
+            style="width: 100%; border: none; display: block; overflow: hidden; background: transparent; transition: height 0.3s ease-in-out;"
             scrolling="<?php echo esc_attr($atts['scrolling']); ?>"
             allow="autoplay; clipboard-write"
+            allowtransparency="true"
             sandbox="allow-scripts allow-same-origin allow-downloads allow-popups allow-popups-to-escape-sandbox allow-forms"
-            title="أذكار الصباح - Morning Adhkar"
+            title="<?php echo esc_attr($title_attr); ?>"
             loading="lazy">
         </iframe>
     </div>
@@ -63,7 +76,7 @@ function morning_adhkar_shortcode($atts = [])
             // Initial fallback height; replaced dynamically by postMessage from the app
             iframe.style.height = '<?php echo esc_js($atts['initial_height']); ?>';
 
-            // Listen for height updates from the Morning Adhkar app and adjust iframe height
+            // Listen for height updates from the Adhkar app and adjust iframe height
             window.addEventListener('message', function(event) {
                 if (event.origin !== ALLOWED_ORIGIN) return;
                 if (!event.data || typeof event.data.height !== 'number') return;
@@ -76,7 +89,41 @@ function morning_adhkar_shortcode($atts = [])
     return ob_get_clean();
 }
 
-// Register shortcode and common aliases
+/**
+ * Shortcode for Morning Adhkar.
+ *
+ * Usage:
+ * [morning_adhkar]
+ * [morning_adhkar max_width="100%" initial_height="900px"]
+ * [morning_adhkar page="daily-duas"]
+ */
+function morning_adhkar_shortcode($atts = [])
+{
+    return morning_adhkar_render_iframe($atts, '');
+}
+
+/**
+ * Shortcode for Daily Duas (أدعية وأذكار يومية).
+ *
+ * Usage:
+ * [daily_duas]
+ * [daily_duas max_width="100%" initial_height="900px"]
+ * [daily_adhkar]
+ * [daily_azkar]
+ */
+function daily_duas_shortcode($atts = [])
+{
+    return morning_adhkar_render_iframe($atts, 'daily-duas');
+}
+
+// Register Morning Adhkar shortcodes
 add_shortcode('morning_adhkar', 'morning_adhkar_shortcode');
 add_shortcode('morning_azkar', 'morning_adhkar_shortcode');
 add_shortcode('azkar_morning', 'morning_adhkar_shortcode');
+
+// Register Daily Duas shortcodes and common aliases
+add_shortcode('daily_duas', 'daily_duas_shortcode');
+add_shortcode('daily_adhkar', 'daily_duas_shortcode');
+add_shortcode('daily_azkar', 'daily_duas_shortcode');
+add_shortcode('azkar_daily', 'daily_duas_shortcode');
+add_shortcode('duas_daily', 'daily_duas_shortcode');

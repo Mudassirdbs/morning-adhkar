@@ -437,7 +437,7 @@ export function ZikrCard({
                   type="button"
                   onClick={changeSpeed}
                   title="سرعة التلاوة"
-                  className="rounded-lg border border-border bg-background px-2.5 py-1 text-xs font-bold text-foreground transition hover:bg-primary hover:text-primary-foreground shadow-sm"
+                  className="rounded-lg border border-border bg-card px-2.5 py-1 text-xs font-bold text-foreground transition hover:bg-primary hover:text-primary-foreground shadow-sm"
                 >
                   {playbackRate}x
                 </button>
@@ -453,7 +453,7 @@ export function ZikrCard({
                   className={`flex h-8 items-center gap-1 rounded-lg border px-2 text-xs font-semibold transition ${
                     autoRepeatWithCount
                       ? "border-primary bg-primary text-primary-foreground shadow-sm"
-                      : "border-border bg-background text-muted-foreground hover:text-foreground"
+                      : "border-border bg-card text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   <Repeat size={13} />
@@ -464,7 +464,7 @@ export function ZikrCard({
                   type="button"
                   onClick={toggleMute}
                   aria-label={isMuted ? "إلغاء الكتم" : "كتم الصوت"}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition hover:text-foreground shadow-sm"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition hover:text-foreground shadow-sm"
                 >
                   {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
                 </button>
