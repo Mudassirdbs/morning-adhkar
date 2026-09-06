@@ -3,9 +3,11 @@ import { azkar } from "@/data/azkar";
 export interface AdhkarApiItem {
   id: number;
   count: number;
-  arabicText: string;
-  fazeelat: string;
-  title?: string;
+  intro: string;
+  text: string;
+  source: string;
+  virtue: string;
+  audio: string | null;
 }
 
 const CORS_HEADERS = {
@@ -23,24 +25,17 @@ export async function OPTIONS() {
 }
 
 export async function GET() {
-  const data: AdhkarApiItem[] = azkar.map((item) => {
-    const arabicText = [item.intro, item.text].filter(Boolean).join(" ").trim();
-    const fazeelat = item.virtue
-      ? item.source
-        ? `${item.virtue} (${item.source})`
-        : item.virtue
-      : item.source || "";
+  const payload: AdhkarApiItem[] = azkar.map((item) => ({
+    id: item.id,
+    count: item.count,
+    intro: item.intro || "",
+    text: item.text,
+    source: item.source || "",
+    virtue: item.virtue || "",
+    audio: item.audio || null,
+  }));
 
-    return {
-      id: item.id,
-      count: item.count,
-      arabicText,
-      fazeelat: fazeelat.trim(),
-      ...(item.title ? { title: item.title } : {}),
-    };
-  });
-
-  return Response.json(data, {
+  return Response.json(payload, {
     headers: CORS_HEADERS,
   });
 }

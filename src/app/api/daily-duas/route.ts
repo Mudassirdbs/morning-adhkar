@@ -2,10 +2,13 @@ import { dailyDuas } from "@/data/dailyDuas";
 
 export interface DailyDuaApiItem {
   id: number;
+  title: string;
   count: number;
-  arabicText: string;
-  fazeelat: string;
-  title?: string;
+  intro: string;
+  text: string;
+  source: string;
+  virtue: string;
+  audio: string | null;
 }
 
 const CORS_HEADERS = {
@@ -23,23 +26,18 @@ export async function OPTIONS() {
 }
 
 export async function GET() {
-  const data: DailyDuaApiItem[] = dailyDuas.map((item) => {
-    const fazeelat = item.virtue
-      ? item.source
-        ? `${item.virtue} (${item.source})`
-        : item.virtue
-      : item.source || "";
+  const payload: DailyDuaApiItem[] = dailyDuas.map((item) => ({
+    id: item.id,
+    title: item.title || "",
+    count: item.count,
+    intro: item.intro || "",
+    text: item.text,
+    source: item.source || "",
+    virtue: item.virtue || "",
+    audio: item.audio || null,
+  }));
 
-    return {
-      id: item.id,
-      count: item.count,
-      arabicText: item.text.trim(),
-      fazeelat: fazeelat.trim(),
-      ...(item.title ? { title: item.title } : {}),
-    };
-  });
-
-  return Response.json(data, {
+  return Response.json(payload, {
     headers: CORS_HEADERS,
   });
 }
